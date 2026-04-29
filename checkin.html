@@ -48,6 +48,13 @@
       border-radius: 12px;
       font-weight: bold;
     }
+    .warning {
+      color: red;
+      font-size: 16px;
+      margin-bottom: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
     .notice {
       font-size: 16px;
       color: #666;
@@ -76,18 +83,22 @@
     <input type="text" id="dept" placeholder="부서명 입력">
 
     <label>내용</label>
-<select id="reason" onchange="toggleCustomReason()">
-  <option value="외근도착">외근도착</option>
-  <option value="외근종료">외근종료</option>
-  <option value="직접입력">직접입력</option>
-</select>
+    <select id="reason" onchange="toggleCustomReason()">
+      <option value="외근도착">외근도착</option>
+      <option value="외근종료">외근종료</option>
+      <option value="직접입력">직접입력</option>
+    </select>
 
-<input 
-  type="text" 
-  id="customReason" 
-  placeholder="사유를 직접 입력하세요" 
-  style="display:none;"
->
+    <input 
+      type="text" 
+      id="customReason" 
+      placeholder="내용을 직접 입력하세요" 
+      style="display:none;"
+    >
+
+    <div class="warning">
+      ※ 위치권한 허용이 필요합니다
+    </div>
 
     <button id="submitBtn" onclick="sendLocation()">등록하기</button>
 
@@ -104,10 +115,12 @@
     const scriptUrl = "https://script.google.com/macros/s/AKfycbyzGV4JRps8SpNqODmsbPiwwcyUSt8y-XQ1_uq_wk96_unVgmAVyvrWiDT5BvSdaPxz/exec";
 
     function sendLocation() {
+      const button = document.getElementById("submitBtn");
+
       const name = document.getElementById("name").value.trim();
       const dept = document.getElementById("dept").value.trim();
-      const reason = document.getElementById("reason").value;
-      const button = document.getElementById("submitBtn");
+      let reason = document.getElementById("reason").value;
+      const customReason = document.getElementById("customReason").value.trim();
 
       if (!name) {
         alert("이름을 입력해주세요.");
@@ -117,6 +130,14 @@
       if (!dept) {
         alert("부서명을 입력해주세요.");
         return;
+      }
+
+      if (reason === "직접입력") {
+        if (!customReason) {
+          alert("내용을 입력해주세요.");
+          return;
+        }
+        reason = customReason;
       }
 
       if (!navigator.geolocation) {
@@ -130,14 +151,12 @@
       navigator.geolocation.getCurrentPosition(function(position) {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
-        const time = new Date().toLocaleString("ko-KR");
         const map = "https://maps.google.com/?q=" + lat + "," + lng;
 
         const data = new URLSearchParams();
         data.append("name", name);
         data.append("dept", dept);
         data.append("reason", reason);
-        data.append("time", time);
         data.append("map", map);
         data.append("lat", lat);
         data.append("lng", lng);
@@ -156,6 +175,18 @@
         button.disabled = false;
         button.innerText = "등록하기";
       });
+    }
+
+    function toggleCustomReason() {
+      const reason = document.getElementById("reason").value;
+      const customInput = document.getElementById("customReason");
+
+      if (reason === "직접입력") {
+        customInput.style.display = "block";
+      } else {
+        customInput.style.display = "none";
+        customInput.value = "";
+      }
     }
   </script>
 </body>
