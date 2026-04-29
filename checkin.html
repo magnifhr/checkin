@@ -58,6 +58,12 @@
       color: red;
       font-weight: bold;
     }
+    .desc {
+      font-size: 14px;
+      color: #555;
+      margin-top: -15px;
+      margin-bottom: 15px;
+    }
     .success {
       display: none;
       text-align: center;
@@ -78,6 +84,12 @@
 
     <label>부서명</label>
     <input type="text" id="dept" placeholder="부서명 입력">
+
+    <label>장소</label>
+    <input type="text" id="place" placeholder="방문 장소 입력">
+    <div class="desc">
+      ※ 방문지가 여러곳이면 최초 장소와 마지막 장소만 등록해주세요
+    </div>
 
     <label>내용</label>
     <select id="reason" onchange="toggleCustomReason()">
@@ -113,6 +125,8 @@
 
       const name = document.getElementById("name").value.trim();
       const dept = document.getElementById("dept").value.trim();
+      const place = document.getElementById("place").value.trim();
+
       let reason = document.getElementById("reason").value;
       const customReason = document.getElementById("customReason").value.trim();
 
@@ -123,6 +137,11 @@
 
       if (!dept) {
         alert("부서명을 입력해주세요.");
+        return;
+      }
+
+      if (!place) {
+        alert("장소를 입력해주세요.");
         return;
       }
 
@@ -151,6 +170,7 @@
         data.append("name", name);
         data.append("dept", dept);
         data.append("reason", reason);
+        data.append("place", place);
         data.append("map", map);
         data.append("lat", lat);
         data.append("lng", lng);
