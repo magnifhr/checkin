@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>외근 위치 등록</title>
+</head>
+<body>
+  <h2>외근 위치 등록</h2>
+  <p>버튼을 누르면 자동으로 전송됩니다.</p>
+
+  <button onclick="sendLocation()">출근 / 외근 등록</button>
+
+  <script>
+    function sendLocation() {
+
+      if (!navigator.geolocation) {
+        alert("위치 기능을 지원하지 않습니다.");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(function(position) {
+
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        const time = new Date().toLocaleString("ko-KR");
+        const map = "https://maps.google.com/?q=" + lat + "," + lng;
+
+        const formUrl =
+        "https://docs.google.com/forms/d/e/1FAIpQLSfvt-GqGTLzkr7pKssCzMqZAtAPfJ7XMPY775jb7HNmBtqQzA/formResponse"
+        + "?entry.1948472607=%ED%99%8D%EA%B8%B8%EB%8F%99"
+        + "&entry.397682399=%EA%B2%BD%EC%98%81%EC%A7%80%EC%9B%90%ED%8C%80"
+        + "&entry.1426782982=" + encodeURIComponent(lat)
+        + "&entry.2142479403=" + encodeURIComponent(lng)
+        + "&entry.121791788=" + encodeURIComponent(time)
+        + "&entry.1632520187=" + encodeURIComponent(map);
+
+        // 👉 제출 후 폼 화면 안보이게 바로 완료 메시지로 이동
+        window.location.href = formUrl + "&submit=Submit";
+
+      }, function(error) {
+        alert("위치 권한을 허용해야 합니다.");
+      });
+    }
+  </script>
+
+</body>
+</html>
