@@ -12,7 +12,6 @@
       background-color: #f5f5f5;
       font-size: 20px;
     }
-
     .box {
       max-width: 520px;
       margin: 0 auto;
@@ -21,18 +20,14 @@
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-
     h2 {
       font-size: 30px;
-      margin-bottom: 24px;
       text-align: center;
     }
-
     label {
       font-weight: bold;
       font-size: 20px;
     }
-
     input, select {
       width: 100%;
       box-sizing: border-box;
@@ -43,7 +38,6 @@
       border: 1px solid #ccc;
       border-radius: 10px;
     }
-
     button {
       width: 100%;
       font-size: 24px;
@@ -54,12 +48,19 @@
       border-radius: 12px;
       font-weight: bold;
     }
-
     .notice {
       font-size: 16px;
       color: #666;
       margin-top: 16px;
       line-height: 1.5;
+    }
+    .success {
+      display: none;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: #15803d;
+      margin-top: 24px;
     }
   </style>
 </head>
@@ -80,18 +81,25 @@
       <option value="현지 퇴근">현지 퇴근</option>
     </select>
 
-    <button onclick="sendLocation()">등록하기</button>
+    <button id="submitBtn" onclick="sendLocation()">등록하기</button>
 
     <div class="notice">
       위치 권한을 허용하면 현재 위치와 시간이 자동으로 등록됩니다.
     </div>
+
+    <div id="successMsg" class="success">
+      등록이 완료되었습니다.
+    </div>
   </div>
 
   <script>
+    const scriptUrl = "https://script.google.com/macros/s/AKfycbyzGV4JRps8SpNqODmsbPiwwcyUSt8y-XQ1_uq_wk96_unVgmAVyvrWiDT5BvSdaPxz/exec";
+
     function sendLocation() {
       const name = document.getElementById("name").value.trim();
       const dept = document.getElementById("dept").value.trim();
       const reason = document.getElementById("reason").value;
+      const button = document.getElementById("submitBtn");
 
       if (!name) {
         alert("이름을 입력해주세요.");
@@ -108,24 +116,37 @@
         return;
       }
 
+      button.disabled = true;
+      button.innerText = "등록 중입니다...";
+
       navigator.geolocation.getCurrentPosition(function(position) {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         const time = new Date().toLocaleString("ko-KR");
         const map = "https://maps.google.com/?q=" + lat + "," + lng;
 
-        const formUrl =
-          "https://docs.google.com/forms/d/e/1FAIpQLSfvt-GqGTLzkr7pKssCzMqZAtAPfJ7XMPY775jb7HNmBtqQzA/formResponse"
-          + "?entry.1948472607=" + encodeURIComponent(name)
-          + "&entry.397682399=" + encodeURIComponent(dept)
-          + "&entry.2142479403=" + encodeURIComponent(reason)
-          + "&entry.121791788=" + encodeURIComponent(time)
-          + "&entry.1632520187=" + encodeURIComponent(map)
-          + "&submit=Submit";
+        const data = new URLSearchParams();
+        data.append("name", name);
+        data.append("dept", dept);
+        data.append("reason", reason);
+        data.append("time", time);
+        data.append("map", map);
+        data.append("lat", lat);
+        data.append("lng", lng);
 
-        window.location.href = formUrl;
+        fetch(scriptUrl, {
+          method: "POST",
+          mode: "no-cors",
+          body: data
+        });
+
+        document.getElementById("successMsg").style.display = "block";
+        button.innerText = "등록 완료";
+
       }, function(error) {
         alert("위치 권한을 허용해야 등록할 수 있습니다.");
+        button.disabled = false;
+        button.innerText = "등록하기";
       });
     }
   </script>
