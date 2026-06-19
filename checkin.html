@@ -165,16 +165,39 @@
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
         const map = "https://maps.google.com/?q=" + lat + "," + lng;
+        const userAgent = navigator.userAgent;
 
+let deviceType = "기타";
+
+if (/Android/i.test(userAgent)) {
+  deviceType = "Android";
+} else if (/iPhone|iPad|iPod/i.test(userAgent)) {
+  deviceType = "iPhone";
+}
+
+let browser = "기타";
+
+if (userAgent.includes("Edg")) {
+  browser = "Edge";
+} else if (userAgent.includes("SamsungBrowser")) {
+  browser = "Samsung Internet";
+} else if (userAgent.includes("Chrome")) {
+  browser = "Chrome";
+} else if (userAgent.includes("Safari")) {
+  browser = "Safari";
+}
         const data = new URLSearchParams();
         data.append("name", name);
         data.append("dept", dept);
         data.append("reason", reason);
         data.append("place", place);
-        data.append("map", map);
-        data.append("lat", lat);
-        data.append("lng", lng);
+       data.append("map", map);
+       data.append("lat", lat);
+       data.append("lng", lng);
 
+       data.append("deviceType", deviceType);
+       data.append("browser", browser);
+        
         fetch(scriptUrl, {
           method: "POST",
           mode: "no-cors",
