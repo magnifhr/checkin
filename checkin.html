@@ -76,6 +76,53 @@
 </head>
 
 <body>
+  <div id="passwordScreen" style="
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:white;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+">
+  <h2>외근 등록 시스템</h2>
+
+  <input
+    type="password"
+    id="pw"
+    maxlength="4"
+    placeholder="비밀번호 4자리"
+    onkeypress="if(event.key==='Enter') checkPassword();"
+    style="
+      width:220px;
+      padding:16px;
+      font-size:22px;
+      text-align:center;
+      margin-top:20px;
+      border:1px solid #ccc;
+      border-radius:10px;
+    "
+  >
+
+  <button
+    onclick="checkPassword()"
+    style="
+      margin-top:15px;
+      padding:15px 30px;
+      font-size:20px;
+      background:#4f46e5;
+      color:white;
+      border:none;
+      border-radius:10px;
+    "
+  >
+    확인
+  </button>
+</div>
   <div class="box">
     <h2>외근 위치 등록</h2>
 
@@ -135,6 +182,27 @@
   </div>
 
   <script>
+    const PAGE_PASSWORD = "8116";
+
+window.onload = function() {
+  const expireTime = localStorage.getItem("authExpire");
+
+  if (expireTime && Date.now() < Number(expireTime)) {
+    document.getElementById("passwordScreen").style.display = "none";
+  }
+};
+
+function checkPassword() {
+  const pw = document.getElementById("pw").value;
+
+  if (pw === PAGE_PASSWORD) {
+    const expireTime = Date.now() + (24 * 60 * 60 * 1000);
+    localStorage.setItem("authExpire", expireTime);
+    document.getElementById("passwordScreen").style.display = "none";
+  } else {
+    alert("비밀번호가 틀렸습니다.");
+  }
+}
     const scriptUrl = "https://script.google.com/macros/s/AKfycbxIItt113RKdria5Q6rPNF2iKeex2PaKEdd5lFoSIvfE3lGLIgaqJjV5f_vE40kCe9q/exec";
 
     function sendLocation() {
