@@ -123,6 +123,16 @@
     확인
   </button>
 </div>
+  <div style="text-align:center; margin-bottom:15px;">
+  <button onclick="openInBrowser()" style="
+    background:#16a34a;
+    font-size:18px;
+    padding:14px;
+    margin-bottom:10px;
+  ">
+    🌐 Chrome에서 열기 (위치 오류 시)
+  </button>
+</div>
   <div class="box">
     <h2>외근 위치 등록</h2>
 
@@ -314,6 +324,17 @@ if (userAgent.includes("Edg")) {
         customInput.value = "";
       }
     }
+    function openInBrowser() {
+  const url = "https://magnifhr.github.io/checkin/checkin.html";
+
+  if (/Android/i.test(navigator.userAgent)) {
+    window.location.href =
+      "intent://" + url.replace("https://", "") +
+      "#Intent;scheme=https;package=com.android.chrome;end";
+  } else {
+    window.open(url, "_blank");
+  }
+}
   </script>
 </body>
 </html>
